@@ -22,7 +22,10 @@ func (r *URLRepositoryPostgres) Save(url domain.URL) error {
 
 func (r *URLRepositoryPostgres) FindByShortened(short string) (*domain.URL, error) {
 	var url domain.URL
-	err := r.DB.QueryRow("SELECT id, original, shortened, expiry FROM urls WHERE shortened = $1", short).
+	err := r.DB.QueryRow(`
+        SELECT id, original, shortened, expiry 
+        FROM urls 
+        WHERE shortened = $1 AND expiry > NOW()`, short).
 		Scan(&url.ID, &url.Original, &url.Shortened, &url.Expiry)
 	if err != nil {
 		return nil, err
