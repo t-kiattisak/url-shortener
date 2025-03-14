@@ -8,11 +8,17 @@ import (
 	"github.com/google/uuid"
 )
 
-type ShortenedURLUsecase struct {
-	repo repository.URLRepository
+type ShortenURLUseCase struct {
+	Repo repository.URLRepository
 }
 
-func (u *ShortenedURLUsecase) Execute(originalURL string) (string, error) {
+func NewShortenURLUseCase(repo repository.URLRepository) *ShortenURLUseCase {
+	return &ShortenURLUseCase{
+		Repo: repo,
+	}
+}
+
+func (u *ShortenURLUseCase) Execute(originalURL string) (string, error) {
 	id := uuid.New().String()
 	shortCode := id[:6]
 	newURL := domain.URL{
@@ -21,7 +27,7 @@ func (u *ShortenedURLUsecase) Execute(originalURL string) (string, error) {
 		Shortened: shortCode,
 		Expiry:    time.Now().Add(24 * time.Hour).Unix(),
 	}
-	err := u.repo.Save(newURL)
+	err := u.Repo.Save(newURL)
 	if err != nil {
 		return "", err
 	}

@@ -7,7 +7,11 @@ import (
 )
 
 type URLHandler struct {
-	shortenUseCase usecase.ShortenedURLUsecase
+	ShortenUseCase *usecase.ShortenURLUseCase
+}
+
+func NewURLHandler(shortenUseCase *usecase.ShortenURLUseCase) *URLHandler {
+	return &URLHandler{ShortenUseCase: shortenUseCase}
 }
 
 func (h *URLHandler) ShortenURL(c *fiber.Ctx) error {
@@ -19,7 +23,7 @@ func (h *URLHandler) ShortenURL(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	short, err := h.shortenUseCase.Execute(req.URL)
+	short, err := h.ShortenUseCase.Execute(req.URL)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to shorten URL"})
 	}
