@@ -21,6 +21,6 @@ func main() {
 	app.Post("/shorten", handler.ShortenURL)
 	app.Get("/:shortened", handler.RedirectURL)
 
-	log.Println("✅ Inventory Service is running on port 3000...")
+	log.Println("Service is running on port 3000...")
 	log.Fatal(app.Listen(":3000"))
 }
