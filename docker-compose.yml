@@ -19,20 +19,5 @@ services:
     ports:
       - "6379:6379"
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: url_shortener_app
-    restart: always
-    depends_on:
-      - db
-      - redis
-    environment:
-      DATABASE_URL: "postgres://user:password@db:5432/url_shortener?sslmode=disable"
-      REDIS_URL: "redis://redis:6379"
-    ports:
-      - "3000:3000"
-
 volumes:
   postgres_data:

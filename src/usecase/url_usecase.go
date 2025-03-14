@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"errors"
+	"log"
 	"time"
 	"url-shortener/src/domain"
 	"url-shortener/src/repository"
@@ -18,18 +20,29 @@ func NewShortenURLUseCase(repo repository.URLRepository) *ShortenURLUseCase {
 	}
 }
 
-func (u *ShortenURLUseCase) Execute(originalURL string) (string, error) {
+func (u *ShortenURLUseCase) ShortenURL(originalURL string) (string, error) {
 	id := uuid.New().String()
-	shortCode := id[:6]
+	shortened := uuid.New().String()[:6]
+	expiry := time.Now().Add(7 * 24 * time.Hour)
+
 	newURL := domain.URL{
 		ID:        id,
 		Original:  originalURL,
-		Shortened: shortCode,
-		Expiry:    time.Now().Add(24 * time.Hour).Unix(),
+		Shortened: shortened,
+		Expiry:    expiry,
 	}
 	err := u.Repo.Save(newURL)
 	if err != nil {
+		log.Println("Error saving URL:", err)
 		return "", err
 	}
-	return shortCode, nil
+	return shortened, nil
+}
+
+func (u *ShortenURLUseCase) FindByShortened(short string) (*domain.URL, error) {
+	url, err := u.Repo.FindByShortened(short)
+	if err != nil {
+		return nil, errors.New("URL not found")
+	}
+	return url, nil
 }
