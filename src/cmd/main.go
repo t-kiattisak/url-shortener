@@ -12,9 +12,13 @@ import (
 
 func main() {
 	app := fiber.New()
-
 	db := infrastructure.NewPostgresDB()
-	repo := &repository.URLRepositoryPostgres{DB: db}
+	redis := infrastructure.NewRedisClient()
+
+	repo := &repository.URLRepositoryPostgres{DB: db,
+		Redis: redis,
+	}
+
 	shortenUseCase := usecase.NewShortenURLUseCase(repo)
 	handler := handler.NewURLHandler(shortenUseCase)
 
